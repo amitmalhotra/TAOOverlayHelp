@@ -16,6 +16,8 @@
 @property (strong, nonatomic) NSMutableArray* statusMessages;
 @property (strong, nonatomic) NSMutableArray* pointAtArray;
 @property (strong, nonatomic) NSMutableArray* didDismissBlockArray;
+@property (strong, nonatomic) NSArray       *labelConstraints;
+
 @end
 
 @implementation TAOOverlayHelp
@@ -61,11 +63,16 @@
     return self;
 }
 - (void)updateConstraints {
+    if (self.labelConstraints.count != 0) {
+        [self removeConstraints:self.labelConstraints];
+    }
+    
     NSLayoutConstraint* centerY = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
     NSLayoutConstraint* centerX = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
     NSLayoutConstraint* marginLeft = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:30];
     NSLayoutConstraint* marginRight = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1 constant:-30];
-    [self addConstraints:@[centerX, centerY, marginLeft, marginRight]];
+    self.labelConstraints = @[centerX, centerY, marginLeft, marginRight];
+    [self addConstraints:self.labelConstraints];
     
     [super updateConstraints];
 }
@@ -129,7 +136,12 @@
         
         for (UIWindow *window in frontToBackWindows)
             if (window.windowLevel == UIWindowLevelNormal) {
-                [window addSubview:self];
+                self.frame = window.rootViewController.view.bounds;
+                self.translatesAutoresizingMaskIntoConstraints = TRUE;
+                self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+                
+                [window.rootViewController.view addSubview:self];
+                
                 break;
             }
     }
@@ -177,7 +189,7 @@
         
         [self setNeedsDisplay];
     }
-
+    
 }
 - (void)dismiss {
     [UIView animateWithDuration:0.15
@@ -194,7 +206,7 @@
                              
                              UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
                              
-                            // Tell the rootViewController to update the StatusBar appearance
+                             // Tell the rootViewController to update the StatusBar appearance
                              UIViewController *rootController = [[UIApplication sharedApplication] keyWindow].rootViewController;
                              if ([rootController respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
                                  [rootController setNeedsStatusBarAppearanceUpdate];
