@@ -28,7 +28,7 @@
     if (self) {
         self.userInteractionEnabled = YES;
         self.alpha = 0;
-        self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.8];
+        self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.80];
         self.translatesAutoresizingMaskIntoConstraints = NO;
         [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
         [self setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
@@ -69,8 +69,8 @@
     
     NSLayoutConstraint* centerY = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
     NSLayoutConstraint* centerX = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
-    NSLayoutConstraint* marginLeft = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:30];
-    NSLayoutConstraint* marginRight = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1 constant:-30];
+    NSLayoutConstraint* marginLeft = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:50];
+    NSLayoutConstraint* marginRight = [NSLayoutConstraint constraintWithItem:self.textLabel attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1 constant:-50];
     self.labelConstraints = @[centerX, centerY, marginLeft, marginRight];
     [self addConstraints:self.labelConstraints];
     
@@ -140,7 +140,12 @@
                 self.translatesAutoresizingMaskIntoConstraints = TRUE;
                 self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
                 
-                [window.rootViewController.view addSubview:self];
+                if (window.rootViewController.presentedViewController) {
+                    [window.rootViewController.presentedViewController.view addSubview:self];
+                }
+                else{
+                    [window.rootViewController.view addSubview:self];
+                }
                 
                 break;
             }
